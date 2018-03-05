@@ -1,0 +1,120 @@
+# This is an example of the Board Demoshow API.
+# As a demonstration of an API spec in YAML.
+swagger: "2.0"
+info:
+  description: "These APIs provide services for manipulating Board Demoshow projec.
+ [Board Demoshow](http://10.110.18.40/inspursoft/board-demoshow)."
+  version: "0.1.0"
+  title: "Board Demoshow"
+  contact:
+    email: "huay@inspur.com"
+  license:
+    name: "The MIT License (MIT)"
+    url: "https://opensource.org/licenses/MIT"
+host: "localhost"
+tags:
+- name: "demoshow"
+  description: "API for Board demoshow"
+  externalDocs:
+    description: "Find out more"
+    url: "http://10.110.18.40/inspursoft/board-demoshow"
+schemes:
+  - http
+basePath: "/api/v1"
+produces:
+  - application/json
+  - text/plain
+consumes:
+  - application/json
+  - text/plain
+paths:
+  /workload:
+    put:
+      tags:
+      - "Products"
+      summary: "Workload entrance for each worker conainer."
+      description: "Workload entrance for each worker conainer."
+      operationId: "workload"
+      parameters:
+        - name: "worker_id"
+          in: path
+          type: integer
+          format: int32
+          required: true
+          description: Worker conainer ID.
+      responses:
+        200:
+          description: "Update workload successfully."
+        500:
+          description: "Unexpected internal errors."
+  /workerinfo:
+    get:
+      tags:
+      - "Products"
+      summary: "List all worker's workload."
+      description: "List all worker's workload."
+      operationId: "workerInfo"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/WorkerInfo"
+        404:
+          description: "Invalid worker container ID."
+        500:
+          description: "Unexpected internal errors."
+  /systeminfo:
+    get:
+      tags:
+      - "Products"
+      summary: "Get system information."
+      description: "Get system information."
+      operationId: "systemInfo"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/SystemInfo"
+        400:
+          description: "Invalid status value"
+definitions:
+  WorkerInfo:
+    type: "object"
+    properties:
+      workerId:
+        type: "integer"
+        format: "int64"
+        description: The worker ID.
+      workerload:
+        type: "integer"
+        format: "int64"
+        description: The worker's total workload.
+      workerVersion:
+        type: "string"
+        description: The worker's image version.
+  SystemInfo:
+    type: "object"
+    properties:
+      startTime:
+        type: "integer"
+        format: "int64"
+        description: The time stamp for system start up.
+      workerIP:
+        type: array
+        items:
+          $ref: '#/definitions/WorkerIP'
+  WorkerIP:
+    type: "object"
+    properties:
+      workerId:
+        type: "integer"
+        format: "int64"
+        description: The worker ID.
+      workerIP:
+        type: string
+        description: The IP address of worker.
+externalDocs:
+  description: "Find out more about Board."
+  url: "http://10.110.18.40/inspursoft/board"
