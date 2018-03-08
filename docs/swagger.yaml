@@ -83,15 +83,15 @@ definitions:
   WorkerInfo:
     type: "object"
     properties:
-      workerId:
+      worker_id:
         type: "integer"
-        format: "int64"
+        format: int32
         description: The worker ID.
-      workerload:
+      workload:
         type: "integer"
         format: "int64"
         description: The worker's total workload.
-      workerVersion:
+      worker_version:
         type: "string"
         description: The worker's image version.
   SystemInfo:
@@ -105,12 +105,15 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/WorkerIP'
+      systemVersion:
+        type: "string"
+        description: The demoshow's image version.
   WorkerIP:
     type: "object"
     properties:
       workerId:
         type: "integer"
-        format: "int64"
+        format: int32
         description: The worker ID.
       workerIP:
         type: string
