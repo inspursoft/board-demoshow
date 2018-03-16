@@ -14,7 +14,7 @@ import (
 
 const (
 	DemocoreDefault = "127.0.0.1:8080"
-	DemocoreURL     = "http://" + DemocoreDefault + "/workload"
+	DemocoreURL     = "http://" + DemocoreDefault + "/api/v1/workload"
 	MaxPID          = 10000
 )
 
