@@ -37,7 +37,7 @@ func main() {
 	for {
 		client := &http.Client{}
 
-		req, err := http.NewRequest("PUT", DemocoreURL, strings.NewReader(strconv.Itoa(int(id))))
+		req, err := http.NewRequest("PUT", accessURL, strings.NewReader(strconv.Itoa(int(id))))
 		if err != nil {
 			fmt.Println("http request failed", err)
 			return
