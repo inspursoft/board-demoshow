@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"sync"
 	//"strconv"
 	"encoding/json"
 )
@@ -14,6 +15,7 @@ type Products struct {
 }
 
 var workMap map[string]int
+var mLock sync.Mutex
 
 func SystemInfo(w http.ResponseWriter, r *http.Request) {
 	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -25,7 +27,9 @@ func SystemInfo(w http.ResponseWriter, r *http.Request) {
 func WorkerInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+	mLock.Lock()
 	workerinfo, err := json.Marshal(workMap)
+	mLock.Unlock()
 	ret, err := w.Write(workerinfo)
 	if err != nil {
 		fmt.Println("write workinfo failed")
@@ -44,9 +48,10 @@ func Workload(w http.ResponseWriter, r *http.Request) {
 	}
 	id := string(body)
 	io.WriteString(w, id)
+	mLock.Lock()
 	workMap[id] = workMap[id] + 1
 	fmt.Println(workMap)
-
+	mLock.Unlock()
 }
 
 func init() {
