@@ -16,8 +16,10 @@ type Products struct {
 var workMap map[string]int
 
 func SystemInfo(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+	io.WriteString(w, "Hello World!\n")
+	io.WriteString(w, "Hello World!")
 }
 
 func WorkerInfo(w http.ResponseWriter, r *http.Request) {
@@ -31,8 +33,6 @@ func WorkerInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println(ret)
-	//io.WriteString(w, "Hello World!\n")
-	//io.WriteString(w, "Hello World!")
 }
 
 func Workload(w http.ResponseWriter, r *http.Request) {
