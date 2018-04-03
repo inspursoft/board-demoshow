@@ -23,13 +23,13 @@ const MAX_NUMBERS_COUNT_LINE: number = 4;
 export class AppComponent implements AfterViewInit {
   @ViewChild('firstOutLet', {read: ViewContainerRef}) firstOutLet: ViewContainerRef;
   @ViewChild('secondOutLet', {read: ViewContainerRef}) secondOutLet: ViewContainerRef;
-  private validNumberComponentList: Map<string, CsNumberComponent>;
+  private validNumberComponentList: Map<number, CsNumberComponent>;
   private inValidNumberComponentList: Array<CsNumberComponent>;
 
   constructor(private demoShowService: DemoShowService,
               private factoryResolver: ComponentFactoryResolver,
               private changeDetectorRef: ChangeDetectorRef) {
-    this.validNumberComponentList = new Map<string, CsNumberComponent>();
+    this.validNumberComponentList = new Map<number, CsNumberComponent>();
     this.inValidNumberComponentList = Array<CsNumberComponent>();
   }
 

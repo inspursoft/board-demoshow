@@ -30,7 +30,7 @@ export class CsTitleComponent implements AfterViewInit, AfterViewChecked {
     this.canvasContext.font = 'bold 80px arial';
     let lineGradient = this.canvasContext.createLinearGradient(0, 0, this.width, this.height);
     lineGradient.addColorStop(0, 'rgba(0, 0, 255, 1)');
-    lineGradient.addColorStop(1, 'rgba(240, 0, 0, 0.8)');
+    lineGradient.addColorStop(1, 'rgba(0, 0, 255, 1)');
     this.canvasContext.fillStyle = lineGradient;
     let numberWidth = this.canvasContext.measureText(this.title).width;
     this.canvasContext.fillText(this.title, (this.width - numberWidth) / 2, this.height / 2 + 40, numberWidth);

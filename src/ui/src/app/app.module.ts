@@ -7,7 +7,6 @@ import { DemoShowService } from './demoShow.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CsTitleComponent } from './cs-title/cs-title.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,

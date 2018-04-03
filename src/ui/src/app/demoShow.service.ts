@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/fromEvent';
 
 export interface IWorkInfo {
-  WorkerID: string;
+  WorkerID: number;
   WorkLoad: number;
-  WorkVersion: string;
 }
 
 export interface INumberColor {
@@ -40,25 +40,13 @@ export class DemoShowService {
   }
 
   getWorkInfoList(): Observable<Array<IWorkInfo>> {
-    return this.isClick ? Observable.of([
-        {WorkerID: 'a', WorkLoad: 32, WorkVersion: '1.0'},
-        {WorkerID: 'b', WorkLoad: 33, WorkVersion: '2.0'},
-        {WorkerID: 'c', WorkLoad: 44, WorkVersion: '2.0'},
-        {WorkerID: 'd', WorkLoad: 55, WorkVersion: '2.0'},
-        {WorkerID: 'e', WorkLoad: 66, WorkVersion: '2.0'}
-      ]) :
-      Observable.of([
-        {WorkerID: 'a', WorkLoad: 123, WorkVersion: '1.0'},
-        {WorkerID: 'b', WorkLoad: 124, WorkVersion: '2.0'},
-        {WorkerID: 'c', WorkLoad: 125, WorkVersion: '2.0'},
-        {WorkerID: 'd', WorkLoad: 126, WorkVersion: '2.0'},
-        {WorkerID: 'e', WorkLoad: 127, WorkVersion: '2.0'},
-        {WorkerID: 'f', WorkLoad: 128, WorkVersion: '1.0'},
-        {WorkerID: 'g', WorkLoad: 129, WorkVersion: '2.0'},
-        {WorkerID: 'h', WorkLoad: 130, WorkVersion: '2.0'},
-        {WorkerID: 'i', WorkLoad: 131, WorkVersion: '2.0'},
-        {WorkerID: 'j', WorkLoad: 132, WorkVersion: '2.0'}
-      ]);
-    // return this.http.get<Array<IWorkInfo>>(`url`);
+    return this.http.get(`/api/v1/workerinfo`)
+      .map((res:Object) => {
+        let result = Array<IWorkInfo>();
+        Object.keys(res).forEach((key:string) =>{
+          result.push({WorkerID: Number(key), WorkLoad: res[key]});
+        });
+        return result;
+      });
   }
 }
