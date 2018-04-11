@@ -27,7 +27,7 @@ export class CsTitleComponent implements AfterViewInit, AfterViewChecked {
   }
 
   private drawTitle() {
-    this.canvasContext.font = 'bold 80px arial';
+    this.canvasContext.font = 'bold 20px arial';
     let lineGradient = this.canvasContext.createLinearGradient(0, 0, this.width, this.height);
     lineGradient.addColorStop(0, 'rgba(0, 0, 255, 1)');
     lineGradient.addColorStop(1, 'rgba(0, 0, 255, 1)');
