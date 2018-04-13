@@ -52,9 +52,18 @@ func SystemInfo(w http.ResponseWriter, r *http.Request) {
 func WorkerInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+	var demoWorkers []model.DemoWorker
 	mLock.Lock()
-	workerinfo, err := json.Marshal(workMap)
+	//workerinfo, err := json.Marshal(workMap)
+	for id, info := range workMap {
+		var demoworker model.DemoWorker
+		demoworker.ID = id
+		demoworker.WorkLoad = info.WorkLoad
+		demoworker.WorkVersion = info.WorkVersion
+		demoWorkers = append(demoWorkers, demoworker)
+	}
 	mLock.Unlock()
+	workerinfo, err := json.Marshal(demoWorkers)
 	ret, err := w.Write(workerinfo)
 	if err != nil {
 		fmt.Println("write workinfo failed")
