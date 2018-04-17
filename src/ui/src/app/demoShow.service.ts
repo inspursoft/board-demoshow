@@ -7,13 +7,20 @@ import 'rxjs/add/operator/repeat';
 import 'rxjs/add/observable/fromEvent';
 
 export interface IWorkInfo {
-  WorkerID: number;
-  WorkLoad: number;
+  worker_id: string;
+  worker_version: string;
+  workload: number;
 }
 
 export interface INumberColor {
   backColor: string;
   fontColor: string;
+}
+
+export interface ISystemInfo {
+  time_stamp: number,
+  system_version: string,
+  sum_workload: number
 }
 
 @Injectable()
@@ -48,13 +55,10 @@ export class DemoShowService {
   }
 
   getWorkInfoList(): Observable<Array<IWorkInfo>> {
-    return this.http.get(`/api/v1/workerinfo`)
-      .map((res: Object) => {
-        let result = Array<IWorkInfo>();
-        Object.keys(res).forEach((key: string) => {
-          result.push({WorkerID: Number(key), WorkLoad: res[key]});
-        });
-        return result;
-      });
+    return this.http.get<Array<IWorkInfo>>(`/api/v1/workerinfo`);
+  }
+
+  getSystemInfo(): Observable<ISystemInfo>{
+    return this.http.get<ISystemInfo>(`/api/v1/systeminfo`);
   }
 }
