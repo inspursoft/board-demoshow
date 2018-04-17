@@ -1,0 +1,39 @@
+<div class="numbers-container">
+  <div [style.width]="containerWidth">
+    <ng-template #numbersOutLet></ng-template>
+    <a href="#" *ngIf="isHaveMoreNumber" (click)="numTimes = numTimes + 1">More...</a>
+  </div>
+</div>
+<div class="info-container">
+  <h3>DemoShow</h3>
+  <div class="info-line-container">
+    <span class="info-line-title">Total Instance:</span>
+    <span>{{totalInstanceCount}}</span>
+  </div>
+  <div class="info-line-container">
+    <span class="info-line-title">Active Instance:</span>
+    <span>{{activeInstanceCount}}</span>
+  </div>
+  <div class="info-line-container">
+    <span class="info-line-title">Sleep Instance:</span>
+    <span>{{sleepInstanceCount}}</span>
+  </div>
+  <div class="info-line-container">
+    <span class="info-line-title">Dead Instance:</span>
+    <span>{{deadInstanceCount}}</span>
+  </div>
+  <div class="info-line-container">
+    <span class="info-line-title">Total Existence Time:</span>
+    <span>{{totalExistenceTime}}</span>
+  </div>
+  <div class="info-line-container">
+    <span class="info-line-title">Workload Sum:</span>
+    <span>{{workLoadSum}}</span>
+  </div>
+  <div class="info-line-container">
+    <span class="info-line-title">System Info:</span>
+    <span>{{systemInfoStr}}</span>
+  </div>
+</div>
+
+

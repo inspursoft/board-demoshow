@@ -1,0 +1,12 @@
+div.numbers {
+  margin-right: 30px;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+div.info-container {
+  display: flex;
+  align-items: center;
+  margin-left: -10px;
+  justify-content: center;
+}

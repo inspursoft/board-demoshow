@@ -1,0 +1,22 @@
+div.numbers-container {
+  display: flex;
+  justify-content: center;
+}
+
+div.info-container {
+  position: fixed;
+  display: flex;
+  bottom: 100px;
+  flex-direction: column;
+  line-height: 20px;
+  margin-left: 50px;
+}
+
+div.info-line-container {
+  font-size: 12px;
+  display: flex;
+}
+
+span.info-line-title{
+  min-width: 150px;
+}
