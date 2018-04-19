@@ -2,7 +2,7 @@
 package main
 
 import (
-	"common/model"
+	//"common/model"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -13,6 +13,11 @@ import (
 	"strings"
 	"time"
 )
+
+type WorkLoad struct {
+	WorkerID    int32  `json:"worker_id"`
+	WorkVersion string `json:"work_version"`
+}
 
 const (
 	DemocoreDefault = "127.0.0.1:8080"
@@ -45,7 +50,7 @@ func main() {
 	//var worker model.WorkLoad
 	//worker.WorkerID = id
 	//worker.WorkVersion = WorkerVersion
-	worker := model.WorkLoad{WorkerID: id, WorkVersion: workerVersion}
+	worker := WorkLoad{WorkerID: id, WorkVersion: workerVersion}
 	fmt.Printf("worker: %+v \n", worker)
 	load, err := json.Marshal(worker)
 	if err != nil {
