@@ -12,10 +12,13 @@ import { CsNumberComponent } from './cs-number/cs-number.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
+import 'rxjs/add/observable/zip';
+import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/bufferCount';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/concat';
 
 const MAX_NUMBERS_COUNT: number = 10;
 const MAX_LINE_NUMBERS_COUNT: number = 5;
@@ -107,7 +110,9 @@ export class AppComponent implements AfterViewInit {
       }, (error: HttpErrorResponse) => {
         console.log(error.message);
       });
-    obs1.merge(obs2).bufferCount(2).subscribe(() => this.changeDetectorRef.detectChanges());
+    /**一直等到所有 observables 都发出一个值，才将所有值作为数组发出*/
+    Observable.zip(obs1, obs2).subscribe(() => this.changeDetectorRef.detectChanges());
+    /**obs1.merge(obs2).bufferCount(2).subscribe(() => this.changeDetectorRef.detectChanges());*/
   }
 
   private initNumbers(workInfoList: Array<IWorkInfo>) {
