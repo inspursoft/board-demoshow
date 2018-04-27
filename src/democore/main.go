@@ -11,7 +11,7 @@ import (
 	"log"
 	"net/http"
 
-	sw "service"
+	sw "git/inspursoft/board-demoshow/src/democore/service"
 )
 
 func main() {
