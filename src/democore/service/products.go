@@ -1,12 +1,11 @@
 package service
 
 import (
-	//"common/model"
+	"git/inspursoft/board-demoshow/src/democore/model"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"model"
 	"net/http"
 	"strconv"
 	"sync"
