@@ -46,7 +46,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.updateData();
+    Observable.interval(1500).subscribe(() => this.updateData());
   }
 
   get containerWidth(): string {
@@ -77,9 +77,8 @@ export class AppComponent implements AfterViewInit {
     return this.deadInstanceCount + this.activeInstanceCount + this.sleepInstanceCount;
   }
 
-  private updateData() {
-    let obs1 = Observable.interval(1500)
-      .switchMap(() => this.demoShowService.getWorkInfoList())
+  public updateData() {
+    let obs1 = this.demoShowService.getWorkInfoList()
       .do((res: Array<IWorkInfo>) => {
         this.activeInstanceCount = res.length;
         if (this.validNumberComponentList.size == 0) {
@@ -93,8 +92,7 @@ export class AppComponent implements AfterViewInit {
       }, (error: HttpErrorResponse) => {
         console.log(error.message);
       });
-    let obs2 = Observable.interval(1500)
-      .switchMap(() => this.demoShowService.getSystemInfo())
+    let obs2 = this.demoShowService.getSystemInfo()
       .do((res: ISystemInfo) => {
         let nowSeconds = Math.round(new Date().getTime() / 1000);
         let restSeconds = nowSeconds - res.time_stamp;
@@ -113,6 +111,9 @@ export class AppComponent implements AfterViewInit {
     /**一直等到所有 observables 都发出一个值，才将所有值作为数组发出*/
     Observable.zip(obs1, obs2).subscribe(() => this.changeDetectorRef.detectChanges());
     /**obs1.merge(obs2).bufferCount(2).subscribe(() => this.changeDetectorRef.detectChanges());*/
+
+    /**forkJoin虽然是Promise.all，但这里的obs1和obs2都没有完成，总是在请求，所以它不适合实时的访问，适合一次性的；
+     * Observable.forkJoin(obs1,obs2).subscribe(() => this.changeDetectorRef.detectChanges());*/
   }
 
   private initNumbers(workInfoList: Array<IWorkInfo>) {
