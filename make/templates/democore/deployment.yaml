@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: democoreui2
+  namespace: library
+spec:
+  replicas: 1
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: democoreui2
+    spec:
+      containers:
+      - image: 10.110.18.105:5000/library/demoshow-democore-inos:v0.1
+        name: demoshow-democore-inos
+        ports:
+        - containerPort: 8080
+        resources: {}
+      - image: 10.110.18.105:5000/library/demoshow-ui-inos:v0.1
+        name: demoshow-ui-inos
+        ports:
+        - containerPort: 80
+        resources: {}
+status:
+  replicas: 0
