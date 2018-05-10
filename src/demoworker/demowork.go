@@ -17,6 +17,7 @@ import (
 type WorkLoad struct {
 	WorkerID    int32  `json:"worker_id"`
 	WorkVersion string `json:"work_version"`
+	NodeName    string `json:"node_name"`
 }
 
 const (
@@ -24,6 +25,7 @@ const (
 	DemocoreURL     = "http://" + DemocoreDefault + "/api/v1/workload"
 	MaxPID          = 10000
 	WorkerVersion   = "1.0"
+	NodeDefault     = "127.0.0.1"
 )
 
 func generateId() int32 {
@@ -38,6 +40,11 @@ func main() {
 		accessURL = DemocoreURL
 	}
 
+	nodeName := os.Getenv("NODE_NAME")
+	if nodeName == "" {
+		nodeName = NodeDefault
+	}
+
 	workerVersion := os.Getenv("WORKER_VERSION")
 	if workerVersion == "" {
 		workerVersion = WorkerVersion
@@ -50,7 +57,7 @@ func main() {
 	//var worker model.WorkLoad
 	//worker.WorkerID = id
 	//worker.WorkVersion = WorkerVersion
-	worker := WorkLoad{WorkerID: id, WorkVersion: workerVersion}
+	worker := WorkLoad{WorkerID: id, WorkVersion: workerVersion, NodeName: nodeName}
 	fmt.Printf("worker: %+v \n", worker)
 	load, err := json.Marshal(worker)
 	if err != nil {
