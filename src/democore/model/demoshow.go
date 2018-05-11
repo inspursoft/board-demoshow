@@ -7,11 +7,13 @@ type DemoWorker struct {
 	//CreationTime time.Time `json:"service_creation_time" orm:"column(creation_time)"`
 	WorkLoad    int    `json:"workload"`
 	WorkVersion string `json:"worker_version"`
+	NodeName    string `json:"node_name"`
 }
 
 type WorkInfo struct {
 	WorkLoad    int    `json:"workload"`
 	WorkVersion string `json:"work_version"`
+	NodeName    string `json:"node_name"`
 }
 
 type SystemInfo struct {
@@ -23,4 +25,5 @@ type SystemInfo struct {
 type WorkLoad struct {
 	WorkerID    int32  `json:"worker_id"`
 	WorkVersion string `json:"work_version"`
+	NodeName    string `json:"node_name"`
 }
