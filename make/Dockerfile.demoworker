@@ -2,5 +2,5 @@ FROM alpine:3.5
 COPY make/demoworker /usr/bin/.
 ENV ACCESS_URL localhost
 ENV WORKER_VERSION 1.0
-CMD /usr/bin/demowork
+CMD /usr/bin/demoworker
 
