@@ -1,9 +1,9 @@
 package service
 
 import (
-	"git/inspursoft/board-demoshow/src/democore/model"
 	"encoding/json"
 	"fmt"
+	"git/inspursoft/board-demoshow/src/democore/model"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -60,6 +60,7 @@ func WorkerInfo(w http.ResponseWriter, r *http.Request) {
 		demoworker.ID = id
 		demoworker.WorkLoad = info.WorkLoad
 		demoworker.WorkVersion = info.WorkVersion
+		demoworker.NodeName = info.NodeName
 		demoWorkers = append(demoWorkers, demoworker)
 	}
 	mLock.Unlock()
@@ -94,7 +95,7 @@ func Workload(w http.ResponseWriter, r *http.Request) {
 		value.WorkLoad++
 		workMap[id] = value
 	} else {
-		workMap[id] = model.WorkInfo{1, worker.WorkVersion}
+		workMap[id] = model.WorkInfo{1, worker.WorkVersion, worker.NodeName}
 	}
 
 	fmt.Println(workMap)
