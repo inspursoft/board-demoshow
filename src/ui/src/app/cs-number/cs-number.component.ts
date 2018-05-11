@@ -76,7 +76,7 @@ export class CsNumberComponent implements AfterViewInit, AfterViewChecked, OnDes
   }
 
   get isFirstVersion(): boolean {
-    return this.curWorkInfo.worker_version === '1.0';
+    return this.curWorkInfo.worker_version.startsWith('1.');
   }
 
   get defaultRadius(): number {
