@@ -8,6 +8,8 @@
     "build": "ng build --prod",
     "test": "ng test --single-run --code-coverage",
     "showcoverage": "http-server -c-1 -o -p 9875 ./coverage",
+    "aot": "node_modules/.bin/ngc -p tsconfig-aot.json",
+    "rollup": "node_modules/.bin/rollup -c src/rollup/rollup-config.js",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
