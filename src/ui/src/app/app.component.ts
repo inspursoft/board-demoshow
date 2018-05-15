@@ -7,7 +7,7 @@ import {
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
-import { DemoShowService, ISystemInfo, IWorkInfo } from './demoShow.service';
+import { DemoShowService, ISystemInfo, IWorkInfo, MAX_NODE_COUNT } from './demoShow.service';
 import { CsNumberComponent } from './cs-number/cs-number.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
@@ -19,9 +19,7 @@ import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/concat';
-
-const MAX_NUMBERS_COUNT: number = 10;
-const MAX_LINE_NUMBERS_COUNT: number = 5;
+import { CsNumberContainerComponent } from './cs-number-container/cs-number-container.component';
 
 @Component({
   selector: 'app-root',
@@ -30,46 +28,35 @@ const MAX_LINE_NUMBERS_COUNT: number = 5;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements AfterViewInit {
-  @ViewChild('numbersOutLet', {read: ViewContainerRef}) numbersOutLet: ViewContainerRef;
-  numTimes: number = 1;
+  @ViewChild('containersOutLet', {read: ViewContainerRef}) containersOutLet: ViewContainerRef;
   activeInstanceCount: number = 0;
-  isHaveMoreNumber: boolean = false;
-  validNumberComponentList: Map<string, CsNumberComponent>;
   totalExistenceTime: string;
   systemInfoStr: string;
   workLoadSum: number;
+  nodeNames: Set<string>;
+  containerIndex: number = 0;
+  containerList: Map<string, CsNumberContainerComponent>;
 
   constructor(private demoShowService: DemoShowService,
               private factoryResolver: ComponentFactoryResolver,
               private changeDetectorRef: ChangeDetectorRef) {
-    this.validNumberComponentList = new Map<string, CsNumberComponent>();
+    this.containerList = new Map<string, CsNumberContainerComponent>();
+    this.nodeNames = new Set<string>();
   }
 
   ngAfterViewInit(): void {
     Observable.interval(1500).subscribe(() => this.updateData());
   }
 
-  get containerWidth(): string {
-    return `${(MAX_LINE_NUMBERS_COUNT * (this.demoShowService.numberHeight + 35))}px`;
-  }
-
   get deadInstanceCount(): number {
     let r = 0;
-    this.validNumberComponentList.forEach((value: CsNumberComponent) => {
-      if (!value.isValid) {
-        r++;
-      }
-    });
+    this.containerList.forEach(value => r += value.deadInstanceCount);
     return r;
   };
 
   get sleepInstanceCount(): number {
     let r = 0;
-    this.validNumberComponentList.forEach((value: CsNumberComponent) => {
-      if (!value.isRun) {
-        r++;
-      }
-    });
+    this.containerList.forEach(value => r += value.sleepInstanceCount);
     return r;
   }
 
@@ -81,13 +68,16 @@ export class AppComponent implements AfterViewInit {
     let obs1 = this.demoShowService.getWorkInfoList()
       .do((res: Array<IWorkInfo>) => {
         this.activeInstanceCount = res.length;
-        if (this.validNumberComponentList.size == 0) {
+        if (this.nodeNames.size == 0) {
+          this.initNodeNames(res);
+          this.initNumberContainers();
           this.initNumbers(res);
         } else {
+          this.addNewNodeName(res);
+          this.addNewContainer();
           this.addNewWorkInfo(res);
           this.checkDeleteInfo(res);
           this.updateWorkInfo(res);
-          this.isHaveMoreNumber = res.length > this.numbersOutLet.length;
         }
       }, (error: HttpErrorResponse) => {
         console.log(error.message);
@@ -117,50 +107,70 @@ export class AppComponent implements AfterViewInit {
   }
 
   private initNumbers(workInfoList: Array<IWorkInfo>) {
-    for (let i = 0; i < workInfoList.length && i < MAX_NUMBERS_COUNT * this.numTimes; i++) {
-      let numberComponent = this.createOneNumberComponent();
-      numberComponent.workInfo = workInfoList[i];
-      numberComponent.isValid = true;
-      this.validNumberComponentList.set(workInfoList[i].worker_id, numberComponent);
-    }
+    workInfoList.forEach(value => {
+      let container: CsNumberContainerComponent = this.containerList.get(value.node_name);
+      if (container){
+        container.createOneNumberComponent(value);
+      }
+    });
   }
 
-  private createOneNumberComponent(): CsNumberComponent {
-    let factory = this.factoryResolver.resolveComponentFactory(CsNumberComponent);
-    let numberRef = this.numbersOutLet.createComponent(factory);
-    let numberColor = this.demoShowService.getNumberColor(this.numbersOutLet.length - 1);
-    numberRef.instance.sideLength = this.demoShowService.numberHeight;
-    numberRef.instance.backgroundColor = numberColor.backColor;
-    numberRef.instance.fontColor = numberColor.fontColor;
-    return numberRef.instance;
+  private initNumberContainers() {
+    this.nodeNames.forEach(value => this.createOneNumberContainer(value));
+  }
+
+  private initNodeNames(workInfoList: Array<IWorkInfo>) {
+    workInfoList.forEach(value => {
+      if (this.nodeNames.size < MAX_NODE_COUNT) {
+        this.nodeNames.add(value.node_name);
+      }
+    });
+  }
+
+  private createOneNumberContainer(nodeName: string): CsNumberContainerComponent {
+    let factory = this.factoryResolver.resolveComponentFactory(CsNumberContainerComponent);
+    let containerRef = this.containersOutLet.createComponent(factory);
+    containerRef.instance.containerIndex = this.containerIndex;
+    containerRef.instance.nodeName = nodeName;
+    this.containerIndex++;
+    this.containerList.set(nodeName, containerRef.instance);
+    return containerRef.instance;
+  }
+
+  addNewNodeName(newWorkInfoList: Array<IWorkInfo>): void {
+    newWorkInfoList.forEach(value => {
+      if (this.nodeNames.size < MAX_NODE_COUNT && !this.nodeNames.has(value.node_name)) {
+        this.nodeNames.add(value.node_name);
+      }
+    });
+  }
+
+  addNewContainer(): void {
+    this.nodeNames.forEach(value => {
+      if (!this.containerList.has(value)) {
+        this.createOneNumberContainer(value);
+      }
+    });
   }
 
   private addNewWorkInfo(newWorkInfoList: Array<IWorkInfo>) {
-    newWorkInfoList.forEach(value => {
-      let notExist = this.validNumberComponentList.get(value.worker_id) === undefined;
-      if (notExist && this.numbersOutLet.length < MAX_NUMBERS_COUNT * this.numTimes) {
-        let inValidComponent = this.createOneNumberComponent();
-        inValidComponent.workInfo = value;
-        inValidComponent.isValid = true;
-        this.validNumberComponentList.set(value.worker_id, inValidComponent);
+    newWorkInfoList.forEach(workInfo => {
+      let container = this.containerList.get(workInfo.node_name);
+      if (container && !container.hasWorkInfo(workInfo.worker_id)) {
+        container.createOneNumberComponent(workInfo);
       }
     });
   }
 
   private updateWorkInfo(newWorkInfoList: Array<IWorkInfo>) {
-    newWorkInfoList.forEach(value => {
-      let instance = this.validNumberComponentList.get(value.worker_id);
-      if (instance) {
-        instance.workInfo = value;
-      }
+    this.containerList.forEach(value => {
+      value.updateWorkInfo(newWorkInfoList);
     });
   }
 
   private checkDeleteInfo(newWorkInfoList: Array<IWorkInfo>) {
-    this.validNumberComponentList.forEach((component: CsNumberComponent, key: string) => {
-      if (newWorkInfoList.find((workInfo: IWorkInfo) => workInfo.worker_id == key) == undefined) {
-        component.isValid = false;
-      }
+    this.containerList.forEach(value => {
+      value.checkDeleteInfo(newWorkInfoList);
     });
   }
 }

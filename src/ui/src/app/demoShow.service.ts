@@ -5,10 +5,18 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/fromEvent';
 
+export const MAX_NODE_COUNT: number = 4;
+export const MAX_LINE_NUMBERS_COUNT: number = 4;
+export interface INumber {
+  sideLength: number;
+  backColor: string;
+  fontColor: string;
+}
 export interface IWorkInfo {
   worker_id: string;
   worker_version: string;
   workload: number;
+  node_name:string;
 }
 
 export interface INumberColor {
