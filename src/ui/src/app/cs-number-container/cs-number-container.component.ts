@@ -4,7 +4,9 @@ import { CsNumberComponent } from '../cs-number/cs-number.component';
 
 @Component({
   selector: 'app-cs-number-container',
-  template: '<div style="display: flex;width: 100%;margin-left: 400px;">{{nodeName}}<ng-template #childContainer></ng-template></div>'
+  template: '<div style="display: flex;width: 100%;margin-left: 400px;">' +
+  '<span style="min-width: 120px">{{nodeName}}</span>' +
+  '<ng-template #childContainer></ng-template></div>'
 })
 export class CsNumberContainerComponent implements OnInit {
   @ViewChild("childContainer", {read: ViewContainerRef}) childContainer:ViewContainerRef;
