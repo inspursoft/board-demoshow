@@ -30,7 +30,7 @@ export class CsNumberContainerComponent implements OnInit {
     if (this.childComponents.length < MAX_LINE_NUMBERS_COUNT) {
       let factory = this.factoryResolver.resolveComponentFactory(CsNumberComponent);
       let numberRef = this.childContainer.createComponent(factory);
-      let numberColor = this.demoShowService.getNumberColor(this.containerIndex * MAX_NODE_COUNT);
+      let numberColor = this.demoShowService.getNumberColor(Number(workInfo.worker_id) % 16);
       numberRef.instance.sideLength = this.demoShowService.numberHeight;
       numberRef.instance.backgroundColor = numberColor.backColor;
       numberRef.instance.fontColor = numberColor.fontColor;
@@ -49,6 +49,10 @@ export class CsNumberContainerComponent implements OnInit {
       }
     });
     return r;
+  }
+
+  get activeInstanceCount(): number{
+    return this.childComponents.length - this.deadInstanceCount - this.sleepInstanceCount;
   }
 
   get sleepInstanceCount(): number {

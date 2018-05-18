@@ -7,7 +7,6 @@
          (click)="showInfoId = !showInfoId"
          [style.visibility]="showInfoIcon ? 'visible' :'hidden'">
     <span *ngIf="showInfoId"
-          style="background-color: "
           [style.margin-left]="showInfoIcon?'0':'-20px'">
       ID:{{curWorkInfo.worker_id}}
     </span>
