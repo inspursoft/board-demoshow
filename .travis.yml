@@ -1,0 +1,23 @@
+---
+install:
+  - PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
+  - BUILDPATH=`pwd`
+  - MODE="build"
+  - GOBUILDIMAGE=golang:1.8.3-alpine3.5
+  - GOIMGBASEPATH=/go/src/git/inspursoft/board-demoshow
+  - MAKEWORKPATH=$BUILDPATH/make
+  - IMAGEPREFIX=demoshow
+  - IMAGETAG=dev
+before_script:
+  - rm -f $GOIMGBASEPATH/make/democore $GOIMGBASEPATH/make/demoworker
+script:
+  - docker run -e "MODE=$MODE" -v $BUILDPATH/src/ui:/board_src dev_uibuilder:v2.0 /entrypoint.sh
+  - docker run --rm -v $BUILDPATH:$GOIMGBASEPATH -w $GOIMGBASEPATH/src/democore $GOBUILDIMAGE go build -v -o $GOIMGBASEPATH/make/democore
+  - docker run --rm -v $BUILDPATH:$GOIMGBASEPATH -w $GOIMGBASEPATH/src/demoworker $GOBUILDIMAGE go build -v -o $GOIMGBASEPATH/make/demoworker
+before_deploy:
+  - docker build -f $BUILDPATH/make/Dockerfile.democore -t ${IMAGEPREFIX}_democore:$IMAGETAG .
+  - docker build -f $BUILDPATH/make/Dockerfile.demoworker -t ${IMAGEPREFIX}_demoworker:$IMAGETAG .
+  - docker build -f $BUILDPATH/make/Dockerfile.ui -t ${IMAGEPREFIX}_ui:$IMAGETAG .
+deploy:
+  - curl -X POST -H "Content-Type:application/yaml" --data-binary "@$WORKSPACE/make/templates/democore/deployment.yaml" "http://10.110.18.26:8080/apis/extensions/v1beta1/namespaces/library/deployments"
+  - curl -X POST -H "Content-Type:application/yaml" --data-binary "@$WORKSPACE/make/templates/democore/service.yaml" "http://10.110.18.26:8080/api/v1/namespaces/library/services"
