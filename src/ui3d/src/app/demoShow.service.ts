@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
-import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/filter';
 
 export interface IWorkInfo {
   worker_id: string;
@@ -38,8 +38,8 @@ export class DemoShowService {
     'rgba(68,114,196,1)',
     'rgba(112,173,71,1)',
 
-    'rgba(112,173,71,1)',
-    'rgba(112,173,71,1)'];
+    'rgba(0,173,71,1)',
+    'rgba(112,0,71,1)'];
 
   constructor(private http: HttpClient) {
   }
@@ -49,7 +49,8 @@ export class DemoShowService {
   }
 
   getWorkInfoList(): Observable<Array<IWorkInfo>> {
-    return this.http.get<Array<IWorkInfo>>(`/api/v1/workerinfo`);
+    return this.http.get<Array<IWorkInfo>>(`/api/v1/workerinfo`)
+      .filter((value: Array<IWorkInfo>) => value && value.length > 0);
   }
 
   getSystemInfo(): Observable<ISystemInfo> {

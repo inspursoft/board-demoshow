@@ -15,7 +15,7 @@ const MAX_NODE_COUNT = 4;
 const ARR_SIZE_UNIT: Array<string> = ['', 'k', 'm', 'g', 't'];
 const MAX_WORKER_COUNT = 4;
 
-enum WORKER_STATUS {RUN, STOP}
+enum WORKER_STATUS {RUN, STOP, DEAD}
 
 @Component({
   selector: 'app-root',
@@ -153,11 +153,13 @@ export class AppComponent implements AfterViewInit {
     res.forEach((value: IWorkInfo) => {
       if (this.nodeNames.has(value.node_name)) {
         let workIndex = this.nodeNames.get(value.node_name);
-        let nodeIndex = this.getNameIndex(value.node_name);
-        let dataIndex = workIndex * MAX_NODE_COUNT + this.changeIndex(nodeIndex);
-        this.workerIndexMap.set(value.worker_id, dataIndex);
-        this.workerStatus.set(value.worker_id, WORKER_STATUS.RUN);
-        this.nodeNames.set(value.node_name, workIndex + 1);
+        if (workIndex < MAX_WORKER_COUNT){
+          let nodeIndex = this.getNameIndex(value.node_name);
+          let dataIndex = workIndex * MAX_NODE_COUNT + this.changeIndex(nodeIndex);
+          this.workerIndexMap.set(value.worker_id, dataIndex);
+          this.workerStatus.set(value.worker_id, WORKER_STATUS.RUN);
+          this.nodeNames.set(value.node_name, workIndex + 1);
+        }
       }
     });
   }
@@ -166,11 +168,13 @@ export class AppComponent implements AfterViewInit {
     res.forEach((value: IWorkInfo) => {
       if (this.nodeNames.has(value.node_name) && this.workerIndexMap.get(value.worker_id) == undefined) {
         let workIndex = this.nodeNames.get(value.node_name);
-        let nodeIndex = this.getNameIndex(value.node_name);
-        let dataIndex = workIndex * MAX_NODE_COUNT + this.changeIndex(nodeIndex);
-        this.workerIndexMap.set(value.worker_id, dataIndex);
-        this.workerStatus.set(value.worker_id, WORKER_STATUS.RUN);
-        this.nodeNames.set(value.node_name, workIndex + 1);
+        if (workIndex < MAX_WORKER_COUNT){
+          let nodeIndex = this.getNameIndex(value.node_name);
+          let dataIndex = workIndex * MAX_NODE_COUNT + this.changeIndex(nodeIndex);
+          this.workerIndexMap.set(value.worker_id, dataIndex);
+          this.workerStatus.set(value.worker_id, WORKER_STATUS.RUN);
+          this.nodeNames.set(value.node_name, workIndex + 1);
+        }
       }
     });
   }
@@ -185,6 +189,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   updateWorkStatus(res: Array<IWorkInfo>) {
+    this.workerStatus.forEach((value,key) => this.workerStatus.set(key, WORKER_STATUS.DEAD));
     res.forEach((value: IWorkInfo) => {
       if (this.workerIndexMap.has(value.worker_id)) {
         let dataIndex = this.workerIndexMap.get(value.worker_id);
@@ -286,8 +291,10 @@ export class AppComponent implements AfterViewInit {
       let workStatus: WORKER_STATUS = this.workerStatus.get(this.getWorkIdByDataIndex(dataIndex));
       if (workStatus == WORKER_STATUS.RUN) {
         return this.demoShowService.getNumberColor(dataIndex);
-      } else {
+      } else if (workStatus == WORKER_STATUS.STOP) {
         return '#484848';
+      } else{
+        return "#2b2b2b";
       }
     }
   }
@@ -310,6 +317,16 @@ export class AppComponent implements AfterViewInit {
     return r;
   }
 
+  get deadInstanceCount(): number {
+    let r: number = 0;
+    this.workerStatus.forEach(value => {
+      if (value == WORKER_STATUS.DEAD) {
+        r++;
+      }
+    });
+    return r;
+  }
+
   get stopInstanceCount(): number {
     let r: number = 0;
     this.workerStatus.forEach(value => {
@@ -321,6 +338,6 @@ export class AppComponent implements AfterViewInit {
   }
 
   get totalInstanceCount(): number {
-    return this.runInstanceCount + this.stopInstanceCount;
+    return this.runInstanceCount + this.stopInstanceCount + this.deadInstanceCount;
   }
 }
