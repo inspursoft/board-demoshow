@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/filter';
 import 'rxjs/add/observable/fromEvent';
 
-export const MAX_NODE_COUNT: number = 4;
-export const MAX_LINE_NUMBERS_COUNT: number = 4;
+export const MAX_NODE_COUNT: number = 10;
+export const MAX_LINE_NUMBERS_COUNT: number = 10;
 export interface INumber {
   sideLength: number;
   backColor: string;
@@ -47,7 +48,9 @@ export class DemoShowService {
     {backColor: 'rgba(237,125,49,1)', fontColor: 'rgba(255,255,255,1)'},
     {backColor: 'rgba(255,192,0,1)', fontColor: 'rgba(255,255,255,1)'},
     {backColor: 'rgba(68,114,196,1)', fontColor: 'rgba(255,255,255,1)'},
-    {backColor: 'rgba(112,173,71,1)', fontColor: 'rgba(255,255,255,1)'}
+    {backColor: 'rgba(112,173,71,1)', fontColor: 'rgba(255,255,255,1)'},
+    {backColor: 'rgba(0,173,71,1)', fontColor: 'rgba(255,255,255,1)'},
+    {backColor: 'rgba(112,0,71,1)', fontColor: 'rgba(255,255,255,1)'}
   ];
 
   constructor(private http: HttpClient) {
@@ -58,12 +61,18 @@ export class DemoShowService {
   }
 
   getNumberColor(index: number): INumberColor {
-    return this.NUMBER_COLORS[index % 14];
+    return this.NUMBER_COLORS[index];
   }
 
   getWorkInfoList(): Observable<Array<IWorkInfo>> {
-    return this.http.get<Array<IWorkInfo>>(`/api/v1/workerinfo`);
+    return this.http.get<Array<IWorkInfo>>(`/api/v1/workerinfo`)
+      .filter((value) => value && value.length > 0)
+      .map(value => {
+        value.forEach(val => val.workload = val.workload % 16);
+        return value;
+      });
   }
+
 
   getSystemInfo(): Observable<ISystemInfo>{
     return this.http.get<ISystemInfo>(`/api/v1/systeminfo`);

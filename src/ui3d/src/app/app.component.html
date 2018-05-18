@@ -1,0 +1,29 @@
+<div id="main" style="height: 800px;" (mousemove)=clickEvent($event)></div>
+<div class="info-container">
+  <h3>DemoShow</h3>
+  <div class="info-line-container">
+    <span class="info-line-title">Total Instance:</span>
+    <span>{{totalInstanceCount}}</span>
+  </div>
+  <div class="info-line-container">
+    <span class="info-line-title">Active Instance:</span>
+    <span>{{runInstanceCount}}</span>
+  </div>
+  <div class="info-line-container">
+    <span class="info-line-title">Dead Instance:</span>
+    <span>{{stopInstanceCount}}</span>
+  </div>
+  <div class="info-line-container">
+    <span class="info-line-title">Total Existence Time:</span>
+    <span>{{totalExistenceTime}}</span>
+  </div>
+  <div class="info-line-container">
+    <span class="info-line-title">Workload Sum:</span>
+    <span>{{workLoadSum}}</span>
+  </div>
+  <div class="info-line-container">
+    <span class="info-line-title">System Info:</span>
+    <span>{{systemInfoStr}}</span>
+  </div>
+</div>
+

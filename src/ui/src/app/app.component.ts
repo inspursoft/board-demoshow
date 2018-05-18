@@ -8,7 +8,6 @@ import {
   ViewContainerRef
 } from '@angular/core';
 import { DemoShowService, ISystemInfo, IWorkInfo, MAX_NODE_COUNT } from './demoShow.service';
-import { CsNumberComponent } from './cs-number/cs-number.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
@@ -29,7 +28,6 @@ import { CsNumberContainerComponent } from './cs-number-container/cs-number-cont
 })
 export class AppComponent implements AfterViewInit {
   @ViewChild('containersOutLet', {read: ViewContainerRef}) containersOutLet: ViewContainerRef;
-  activeInstanceCount: number = 0;
   totalExistenceTime: string;
   systemInfoStr: string;
   workLoadSum: number;
@@ -60,6 +58,12 @@ export class AppComponent implements AfterViewInit {
     return r;
   }
 
+  get activeInstanceCount(): number{
+    let r = 0;
+    this.containerList.forEach(value => r += value.activeInstanceCount);
+    return r;
+  }
+
   get totalInstanceCount(): number {
     return this.deadInstanceCount + this.activeInstanceCount + this.sleepInstanceCount;
   }
@@ -67,7 +71,6 @@ export class AppComponent implements AfterViewInit {
   public updateData() {
     let obs1 = this.demoShowService.getWorkInfoList()
       .do((res: Array<IWorkInfo>) => {
-        this.activeInstanceCount = res.length;
         if (this.nodeNames.size == 0) {
           this.initNodeNames(res);
           this.initNumberContainers();
