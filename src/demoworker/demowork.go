@@ -26,6 +26,7 @@ const (
 	MaxPID          = 10000
 	WorkerVersion   = "1.0"
 	NodeDefault     = "127.0.0.1"
+	SleepSec        = 5
 )
 
 func generateId() int32 {
@@ -72,20 +73,26 @@ func main() {
 
 		if err != nil {
 			fmt.Println("http request failed", err)
-			return
+			fmt.Println("Sleeping %d sec", SleepSec)
+			time.Sleep(SleepSec * time.Second)
+			continue
 		}
 
 		resp, err := client.Do(req)
 		if err != nil {
 			fmt.Println("send http request failed", err)
-			return
+			fmt.Println("Sleeping %d sec", SleepSec)
+			time.Sleep(SleepSec * time.Second)
+			continue
 		}
 		defer resp.Body.Close()
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Println("read http response failed", err)
-			return
+			fmt.Println("Sleeping %d sec", SleepSec)
+			time.Sleep(SleepSec * time.Second)
+			continue
 		}
 		fmt.Println(string(body))
 		time.Sleep(time.Second)
