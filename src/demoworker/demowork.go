@@ -9,7 +9,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
-	//"strconv"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -55,6 +55,16 @@ func main() {
 	if prefix != "" {
 		log.SetPrefix(prefix)
 	}
+
+	interval := 1
+	if intr := os.Getenv("INTERVAL"); intr != "" {
+		val, err := strconv.Atoi(intr)
+		if err != nil {
+			log.Panic("the INTERVAL value %s is not an integer", intr)
+		}
+		interval = val
+	}
+
 	log.Printf("Demoworker (%s) access: %s\n", workerVersion, accessURL)
 
 	id := generateId()
@@ -100,6 +110,6 @@ func main() {
 			continue
 		}
 		log.Println(string(body))
-		time.Sleep(time.Second)
+		time.Sleep(time.Duration(interval) * time.Second)
 	}
 }
