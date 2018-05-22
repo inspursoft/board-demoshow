@@ -6,8 +6,8 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/observable/fromEvent';
 
-export const MAX_NODE_COUNT: number = 10;
-export const MAX_LINE_NUMBERS_COUNT: number = 10;
+export const MAX_NODE_COUNT: number = 20;
+export const MAX_LINE_NUMBERS_COUNT: number = 20;
 export interface INumber {
   sideLength: number;
   backColor: string;
@@ -66,11 +66,7 @@ export class DemoShowService {
 
   getWorkInfoList(): Observable<Array<IWorkInfo>> {
     return this.http.get<Array<IWorkInfo>>(`/api/v1/workerinfo`)
-      .filter((value) => value && value.length > 0)
-      .map(value => {
-        value.forEach(val => val.workload = val.workload % 16);
-        return value;
-      });
+      .filter((value) => value && value.length > 0);
   }
 
 

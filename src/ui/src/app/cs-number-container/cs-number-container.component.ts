@@ -1,12 +1,13 @@
 import { Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { DemoShowService, IWorkInfo, MAX_LINE_NUMBERS_COUNT, MAX_NODE_COUNT } from '../demoShow.service';
+import { DemoShowService, IWorkInfo, MAX_LINE_NUMBERS_COUNT } from '../demoShow.service';
 import { CsNumberComponent } from '../cs-number/cs-number.component';
 
 @Component({
   selector: 'app-cs-number-container',
-  template: '<div style="display: flex;width: 100%;margin-left: 400px;">' +
+  template: '<div style="margin-left: 400px;display: flex;align-items: center">' +
   '<span style="min-width: 120px">{{nodeName}}</span>' +
-  '<ng-template #childContainer></ng-template></div>'
+  '<div style="width: 950px;">' +
+  '<ng-template #childContainer></ng-template></div></div>'
 })
 export class CsNumberContainerComponent implements OnInit {
   @ViewChild("childContainer", {read: ViewContainerRef}) childContainer:ViewContainerRef;
