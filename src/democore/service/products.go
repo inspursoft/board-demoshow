@@ -7,7 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"strconv"
+	//"strconv"
 	"sync"
 	"time"
 )
@@ -87,7 +87,7 @@ func Workload(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(worker)
 
 	//id := string(body)
-	id := strconv.Itoa(int(worker.WorkerID))
+	id := worker.WorkerID
 	io.WriteString(w, id)
 	mLock.Lock()
 	value, ok := workMap[id]

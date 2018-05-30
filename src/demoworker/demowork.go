@@ -15,7 +15,7 @@ import (
 )
 
 type WorkLoad struct {
-	WorkerID    int32  `json:"worker_id"`
+	WorkerID    string `json:"worker_id"`
 	WorkVersion string `json:"work_version"`
 	NodeName    string `json:"node_name"`
 }
@@ -67,13 +67,17 @@ func main() {
 
 	log.Printf("Demoworker (%s) access: %s\n", workerVersion, accessURL)
 
-	id := generateId()
-	//fmt.Printf("id: %d \n", id)
+	workername := os.Getenv("WORKER_NAME")
+	if workername == "" {
+		id := generateId()
+		//fmt.Printf("id: %d \n", id)
+		workername = strconv.Itoa(int(id))
+	}
 
 	//var worker model.WorkLoad
 	//worker.WorkerID = id
 	//worker.WorkVersion = WorkerVersion
-	worker := WorkLoad{WorkerID: id, WorkVersion: workerVersion, NodeName: nodeName}
+	worker := WorkLoad{WorkerID: workername, WorkVersion: workerVersion, NodeName: nodeName}
 	log.Printf("worker: %+v \n", worker)
 	load, err := json.Marshal(worker)
 	if err != nil {

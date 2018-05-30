@@ -23,7 +23,7 @@ type SystemInfo struct {
 }
 
 type WorkLoad struct {
-	WorkerID    int32  `json:"worker_id"`
+	WorkerID    string `json:"worker_id"`
 	WorkVersion string `json:"work_version"`
 	NodeName    string `json:"node_name"`
 }
