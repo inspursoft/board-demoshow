@@ -4,12 +4,12 @@ package main
 import (
 	//"common/model"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
-	//"strconv"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -50,7 +50,22 @@ func main() {
 	if workerVersion == "" {
 		workerVersion = WorkerVersion
 	}
-	fmt.Println("Demoworker (%s) access: %s", workerVersion, accessURL)
+
+	prefix := os.Getenv("LOG_PREFIX")
+	if prefix != "" {
+		log.SetPrefix(prefix)
+	}
+
+	interval := 1
+	if intr := os.Getenv("INTERVAL"); intr != "" {
+		val, err := strconv.Atoi(intr)
+		if err != nil {
+			log.Panic("the INTERVAL value %s is not an integer", intr)
+		}
+		interval = val
+	}
+
+	log.Printf("Demoworker (%s) access: %s\n", workerVersion, accessURL)
 
 	id := generateId()
 	//fmt.Printf("id: %d \n", id)
@@ -59,10 +74,10 @@ func main() {
 	//worker.WorkerID = id
 	//worker.WorkVersion = WorkerVersion
 	worker := WorkLoad{WorkerID: id, WorkVersion: workerVersion, NodeName: nodeName}
-	fmt.Printf("worker: %+v \n", worker)
+	log.Printf("worker: %+v \n", worker)
 	load, err := json.Marshal(worker)
 	if err != nil {
-		fmt.Println("json request failed", err)
+		log.Printf("json request failed\n", err)
 		return
 	}
 
@@ -72,16 +87,16 @@ func main() {
 		req, err := http.NewRequest("PUT", accessURL, strings.NewReader(string(load)))
 
 		if err != nil {
-			fmt.Println("http request failed", err)
-			fmt.Println("Sleeping %d sec", SleepSec)
+			log.Println("http request failed", err)
+			log.Printf("Sleeping %d sec\n", SleepSec)
 			time.Sleep(SleepSec * time.Second)
 			continue
 		}
 
 		resp, err := client.Do(req)
 		if err != nil {
-			fmt.Println("send http request failed", err)
-			fmt.Println("Sleeping %d sec", SleepSec)
+			log.Println("send http request failed", err)
+			log.Printf("Sleeping %d sec\n", SleepSec)
 			time.Sleep(SleepSec * time.Second)
 			continue
 		}
@@ -89,12 +104,12 @@ func main() {
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			fmt.Println("read http response failed", err)
-			fmt.Println("Sleeping %d sec", SleepSec)
+			log.Println("read http response failed", err)
+			log.Printf("Sleeping %d sec\n", SleepSec)
 			time.Sleep(SleepSec * time.Second)
 			continue
 		}
-		fmt.Println(string(body))
-		time.Sleep(time.Second)
+		log.Println(string(body))
+		time.Sleep(time.Duration(interval) * time.Second)
 	}
 }
