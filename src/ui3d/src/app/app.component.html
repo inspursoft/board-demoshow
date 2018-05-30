@@ -1,6 +1,4 @@
-<div class="numbers-container">
-    <ng-template #containersOutLet></ng-template>
-</div>
+<div id="main" style="height: 800px;" (mousemove)=clickEvent($event)></div>
 <div class="info-container">
   <h3>DemoShow</h3>
   <div class="info-line-container">
@@ -9,11 +7,11 @@
   </div>
   <div class="info-line-container">
     <span class="info-line-title">Active Instance:</span>
-    <span>{{activeInstanceCount}}</span>
+    <span>{{runInstanceCount}}</span>
   </div>
   <div class="info-line-container">
-    <span class="info-line-title">Sleep Instance:</span>
-    <span>{{sleepInstanceCount}}</span>
+    <span class="info-line-title">Stop Instance:</span>
+    <span>{{stopInstanceCount}}</span>
   </div>
   <div class="info-line-container">
     <span class="info-line-title">Dead Instance:</span>
@@ -32,5 +30,4 @@
     <span>{{systemInfoStr}}</span>
   </div>
 </div>
-
 

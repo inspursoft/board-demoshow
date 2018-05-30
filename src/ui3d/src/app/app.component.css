@@ -1,6 +1,6 @@
 div.numbers-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
 }
 
 div.info-container {

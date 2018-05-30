@@ -11,7 +11,7 @@ const ARR_SIZE_UNIT: Array<string> = ['', 'k', 'm', 'g', 't'];
 export class CsNumberComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
   @ViewChild('canvasNumber') canvasNumber: ElementRef;
   @Input() sideLength: number;
-  @Input() borderWidth: number = 10;
+  @Input() borderWidth: number = 5;
   @Input() isValid: boolean = false;
   curWorkInfo: IWorkInfo;
   showInfoId: boolean = false;
@@ -76,7 +76,7 @@ export class CsNumberComponent implements AfterViewInit, AfterViewChecked, OnDes
   }
 
   get isFirstVersion(): boolean {
-    return this.curWorkInfo.worker_version === '1.0';
+    return this.curWorkInfo.worker_version.startsWith('1.');
   }
 
   get defaultRadius(): number {
@@ -125,7 +125,7 @@ export class CsNumberComponent implements AfterViewInit, AfterViewChecked, OnDes
     let numberStr = this.getNumberStr();
     let numberWidth = this.canvasContext.measureText(numberStr).width;
     let lineGradient = this.canvasContext.createLinearGradient(0, this.sideLength / 2 - 40, this.sideLength, this.sideLength / 2 - 40);
-    let textY = this.curWorkInfo.workload > 999 ? this.sideLength / 2 : this.sideLength / 2 + 20;
+    let textY = this.curWorkInfo.workload > 999 ? this.sideLength / 2 : this.sideLength / 2 + 10;
     lineGradient.addColorStop(0, fontColor);
     lineGradient.addColorStop(1, fontColor);
     this.canvasContext.fillStyle = lineGradient;

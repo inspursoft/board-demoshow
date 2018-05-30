@@ -6,19 +6,21 @@ import { CsNumberComponent } from './cs-number/cs-number.component';
 import { DemoShowService } from './demoShow.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CsTitleComponent } from './cs-title/cs-title.component';
+import { CsNumberContainerComponent } from './cs-number-container/cs-number-container.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CsTitleComponent,
     CsNumberComponent,
-    CsClockComponent
+    CsClockComponent,
+    CsNumberContainerComponent
   ],
   imports: [
     HttpClientModule,
     BrowserModule
   ],
-  entryComponents: [CsNumberComponent],
+  entryComponents: [CsNumberComponent,CsNumberContainerComponent],
   providers: [DemoShowService],
   bootstrap: [AppComponent]
 })
