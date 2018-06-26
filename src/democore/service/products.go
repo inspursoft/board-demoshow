@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	//"strconv"
+	"log"
 	"sync"
 	"time"
 )
@@ -16,13 +17,23 @@ type Products struct {
 }
 
 const (
-	CoreVersion = "1.0"
+	CoreVersion    = "1.0"
+	ReverseDefault = 10
+)
+
+const (
+	k8s = iota
+	istio
 )
 
 var workMap map[string]model.WorkInfo
 var mLock sync.Mutex //TODO should use RWLOCK
 
 var systemInfo model.SystemInfo
+
+var IntervalDefault int = ReverseDefault
+var accessTimer int
+var workWay int = k8s
 
 func SystemInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -36,6 +47,7 @@ func SystemInfo(w http.ResponseWriter, r *http.Request) {
 	mLock.Unlock()
 
 	systemInfo.SumWorkload = sum
+	systemInfo.WorkWay = workWay
 	//body, err := json.Marshal(systemInfo)
 	ret, err := w.Write(func() []byte {
 		n, _ := json.Marshal(systemInfo)
@@ -61,6 +73,7 @@ func WorkerInfo(w http.ResponseWriter, r *http.Request) {
 		demoworker.WorkLoad = info.WorkLoad
 		demoworker.WorkVersion = info.WorkVersion
 		demoworker.NodeName = info.NodeName
+		demoworker.WorkWay = workWay
 		demoWorkers = append(demoWorkers, demoworker)
 	}
 	mLock.Unlock()
@@ -99,7 +112,57 @@ func Workload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println(workMap)
+	accessTimer = IntervalDefault
+	workWay = k8s
 	mLock.Unlock()
+}
+
+func ReverseAccess(istioURL string) {
+	accessTimer = IntervalDefault
+	for {
+		if accessTimer == 0 {
+			if workWay == k8s {
+				mLock.Lock()
+				workWay = istio
+				mLock.Unlock()
+			}
+			fmt.Println("Accessing ", istioURL)
+			resp, err := http.Get(istioURL)
+			if err != nil {
+				log.Println("http get failed", err)
+			} else {
+				defer resp.Body.Close()
+				body, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					log.Println("read body failed", err)
+				} else {
+					var worker model.WorkLoad
+					err = json.Unmarshal(body, &worker)
+					fmt.Println(worker)
+
+					id := worker.WorkerID
+					mLock.Lock()
+					value, ok := workMap[id]
+					if ok {
+						value.WorkLoad++
+						workMap[id] = value
+					} else {
+						workMap[id] = model.WorkInfo{1, worker.WorkVersion, worker.NodeName}
+					}
+
+					fmt.Println(workMap)
+					mLock.Unlock()
+				}
+			}
+
+		}
+		mLock.Lock()
+		if accessTimer > 0 {
+			accessTimer--
+		}
+		mLock.Unlock()
+		time.Sleep(time.Second)
+	}
 }
 
 func init() {

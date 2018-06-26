@@ -8,6 +8,7 @@ type DemoWorker struct {
 	WorkLoad    int    `json:"workload"`
 	WorkVersion string `json:"worker_version"`
 	NodeName    string `json:"node_name"`
+	WorkWay     int    `json:"work_way"`
 }
 
 type WorkInfo struct {
@@ -20,6 +21,7 @@ type SystemInfo struct {
 	StartTimeStamp int64  `json:"time_stamp"`
 	SystemVersion  string `json:"system_version"`
 	SumWorkload    int    `json:"sum_workload"`
+	WorkWay        int    `json:"work_way"`
 }
 
 type WorkLoad struct {
