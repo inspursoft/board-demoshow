@@ -34,6 +34,7 @@ export class AppComponent implements AfterViewInit {
   nodeNames: Set<string>;
   containerIndex: number = 0;
   containerList: Map<string, CsNumberContainerComponent>;
+  workWay: number = -1;
 
   constructor(private demoShowService: DemoShowService,
               private factoryResolver: ComponentFactoryResolver,
@@ -96,6 +97,10 @@ export class AppComponent implements AfterViewInit {
         let minutes = Math.floor(restSeconds / 60);
         restSeconds -= minutes * 60;
         this.totalExistenceTime = `(${days})days,${hours}:${minutes}:${restSeconds}`;
+        if (this.workWay > -1 && this.workWay != res.work_way){
+          window.location.reload(true);
+        }
+        this.workWay = res.work_way;
         this.systemInfoStr = res.system_version;
         this.workLoadSum = res.sum_workload;
       }, (error: HttpErrorResponse) => {

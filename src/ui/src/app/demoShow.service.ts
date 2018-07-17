@@ -28,7 +28,8 @@ export interface INumberColor {
 export interface ISystemInfo {
   time_stamp: number,
   system_version: string,
-  sum_workload: number
+  sum_workload: number,
+  work_way: number
 }
 
 @Injectable()
