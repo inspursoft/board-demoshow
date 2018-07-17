@@ -50,7 +50,10 @@ func istiowork(w http.ResponseWriter, r *http.Request) {
 
 func istioserve() {
 	http.HandleFunc("/istiowork", istiowork)
-	log.Fatal(http.ListenAndServe(":9000", nil))
+	err := http.ListenAndServe(":9000", nil)
+	if err != nil {
+		log.Println("failed to listen 9000 in worker", err)
+	}
 }
 
 func main() {
