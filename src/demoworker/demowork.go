@@ -29,10 +29,28 @@ const (
 	SleepSec        = 5
 )
 
+var worker WorkLoad
+
 func generateId() int32 {
 	t := time.Now()
 	r := rand.New(rand.NewSource(t.UnixNano()))
 	return r.Int31()
+}
+
+func istiowork(w http.ResponseWriter, r *http.Request) {
+	workerinfo, _ := json.Marshal(worker)
+	ret, err := w.Write(workerinfo)
+	if err != nil {
+		log.Println("write workinfo failed")
+		//http.Error(w, "write workinfo failed", 400)
+		return
+	}
+	log.Println(ret)
+}
+
+func istioserve() {
+	http.HandleFunc("/istiowork", istiowork)
+	log.Fatal(http.ListenAndServe(":9000", nil))
 }
 
 func main() {
@@ -74,11 +92,15 @@ func main() {
 		workername = strconv.Itoa(int(id))
 	}
 
-	//var worker model.WorkLoad
-	//worker.WorkerID = id
-	//worker.WorkVersion = WorkerVersion
-	worker := WorkLoad{WorkerID: workername, WorkVersion: workerVersion, NodeName: nodeName}
+	//worker := WorkLoad{WorkerID: workername, WorkVersion: workerVersion, NodeName: nodeName}
+	worker.WorkerID = workername
+	worker.WorkVersion = workerVersion
+	worker.NodeName = nodeName
 	log.Printf("worker: %+v \n", worker)
+
+	//start istio worker serve
+	go istioserve()
+
 	load, err := json.Marshal(worker)
 	if err != nil {
 		log.Printf("json request failed\n", err)

@@ -27,6 +27,7 @@ func main() {
 	}
 
 	istioURL := os.Getenv("ISTIO_SERVICE")
+	//istioURL = "http://127.0.0.1:9000/istiowork"
 	if istioURL != "" {
 		//Start reverse access process
 		go sw.ReverseAccess(istioURL)
