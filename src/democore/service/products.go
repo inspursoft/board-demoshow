@@ -6,6 +6,7 @@ import (
 	"git/inspursoft/board-demoshow/src/democore/model"
 	"io"
 	"io/ioutil"
+	"net"
 	"net/http"
 	//"strconv"
 	"log"
@@ -118,6 +119,21 @@ func Workload(w http.ResponseWriter, r *http.Request) {
 }
 
 func ReverseAccess(istioURL string) {
+	c := http.Client{
+		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+			DialContext: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 0,
+				DualStack: true,
+			}).DialContext,
+			MaxIdleConns:          100,
+			IdleConnTimeout:       90 * time.Second,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ExpectContinueTimeout: 1 * time.Second,
+			DisableKeepAlives:     true,
+		},
+	}
 	accessTimer = IntervalDefault
 	for {
 		if accessTimer == 0 {
@@ -127,7 +143,7 @@ func ReverseAccess(istioURL string) {
 				mLock.Unlock()
 			}
 			fmt.Println("Accessing ", istioURL)
-			resp, err := http.Get(istioURL)
+			resp, err := c.Get(istioURL)
 			if err != nil {
 				log.Println("http get failed", err)
 			} else {
