@@ -1,0 +1,45 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ include "board-demoshow.demoworker.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "board-demoshow.name" . }}
+    helm.sh/chart: {{ include "board-demoshow.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: {{ .Values.demoworker.name }}
+spec:
+  replicas: {{ .Values.demoworker.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "board-demoshow.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: {{ .Values.demoworker.name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "board-demoshow.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: {{ .Values.demoworker.name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.demoworker.image.repository }}:{{ .Values.demoworker.image.tag }}"
+          imagePullPolicy: {{ .Values.demoworker.image.pullPolicy }}
+          env:
+            - name: ACCESS_URL
+              value: http://{{ include "board-demoshow.democore.fullname" . }}:{{ .Values.democore.service.port }}/api/v1/workload
+          resources:
+{{ toYaml .Values.demoworker.resources | indent 12 }}
+    {{- with .Values.demoworker.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.demoworker.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.demoworker.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
