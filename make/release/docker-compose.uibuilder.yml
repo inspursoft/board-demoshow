@@ -1,0 +1,11 @@
+version: '2'
+services:
+  uibuilder_demoshow:
+    build:
+      context: ../../
+      dockerfile: make/release/container/uibuilder/Dockerfile
+    image: uibuilder_demoshow
+    volumes:
+      - ../../src/board-ui:/board_src
+    entrypoint:
+      - /entrypoint.sh
