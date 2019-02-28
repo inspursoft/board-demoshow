@@ -23,14 +23,14 @@ ifeq ($(DEVFLAG), release)
 #	WORKPATH=release
 	IMAGEPREFIX=demoshow
 	UIBUILDFLAG=build
-	UIBUILDERIMAGENAME=uibuilder_demoshow_dev
+	UIBUILDERIMAGENAME=uibuilder_demoshow
 else
 	BASEIMAGE=ubuntu:14.04
 	GOBUILDIMAGE=golang:1.8.1
 #	WORKPATH=dev
 	IMAGEPREFIX=dev
 	UIBUILDFLAG=prod
-	UIBUILDERIMAGENAME=uibuilder_demoshow_release
+	UIBUILDERIMAGENAME=uibuilder_demoshow
 endif 
 
 # Base shell parameters

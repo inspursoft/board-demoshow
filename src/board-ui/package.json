@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy.config.json --host 0.0.0.0",
     "build": "ng build --output-path ./dist",
     "test": "ng test",
     "showcoverage": "http-server -c-1 -o -p 9875 ./coverage",
