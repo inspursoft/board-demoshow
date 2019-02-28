@@ -23,14 +23,14 @@ ifeq ($(DEVFLAG), release)
 #	WORKPATH=release
 	IMAGEPREFIX=demoshow
 	UIBUILDFLAG=build
-	UIBUILDERIMAGENAME=dev_uibuilder:v2.0
+	UIBUILDERIMAGENAME=uibuilder_demoshow
 else
 	BASEIMAGE=ubuntu:14.04
 	GOBUILDIMAGE=golang:1.8.1
 #	WORKPATH=dev
 	IMAGEPREFIX=dev
-	UIBUILDFLAG=test
-	UIBUILDERIMAGENAME=dev_uibuilder:v2.0
+	UIBUILDFLAG=prod
+	UIBUILDERIMAGENAME=uibuilder_demoshow
 endif 
 
 # Base shell parameters
@@ -110,7 +110,7 @@ version:
 	@echo $(VERSIONTAG) > $(VERSIONFILE)
 
 compile_ui:
-	$(DOCKERCMD) run -e "MODE=$(UIBUILDFLAG)" -v $(BUILDPATH)/src/ui:/board_src \
+	$(DOCKERCMD) run -e "MODE=$(UIBUILDFLAG)" -v $(BUILDPATH)/src/board-ui:/board_src \
 					$(UIBUILDERIMAGENAME) /entrypoint.sh
 
 clean_ui:
