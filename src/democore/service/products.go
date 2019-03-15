@@ -75,6 +75,7 @@ func WorkerInfo(w http.ResponseWriter, r *http.Request) {
 		demoworker.WorkVersion = info.WorkVersion
 		demoworker.NodeName = info.NodeName
 		demoworker.WorkWay = workWay
+		demoworker.WorkFont = info.WorkFont
 		demoWorkers = append(demoWorkers, demoworker)
 	}
 	mLock.Unlock()
@@ -109,7 +110,7 @@ func Workload(w http.ResponseWriter, r *http.Request) {
 		value.WorkLoad++
 		workMap[id] = value
 	} else {
-		workMap[id] = model.WorkInfo{1, worker.WorkVersion, worker.NodeName}
+		workMap[id] = model.WorkInfo{1, worker.WorkVersion, worker.NodeName, worker.WorkFont}
 	}
 
 	fmt.Println(workMap)
@@ -163,7 +164,7 @@ func ReverseAccess(istioURL string) {
 						value.WorkLoad++
 						workMap[id] = value
 					} else {
-						workMap[id] = model.WorkInfo{1, worker.WorkVersion, worker.NodeName}
+						workMap[id] = model.WorkInfo{1, worker.WorkVersion, worker.NodeName, worker.WorkFont}
 					}
 
 					fmt.Println(workMap)

@@ -18,6 +18,7 @@ type WorkLoad struct {
 	WorkerID    string `json:"worker_id"`
 	WorkVersion string `json:"work_version"`
 	NodeName    string `json:"node_name"`
+	WorkFont    int    `json:"work_font"`
 }
 
 const (
@@ -95,10 +96,23 @@ func main() {
 		workername = strconv.Itoa(int(id))
 	}
 
+	fontsize := os.Getenv("FONT_SIZE")
+
 	//worker := WorkLoad{WorkerID: workername, WorkVersion: workerVersion, NodeName: nodeName}
 	worker.WorkerID = workername
 	worker.WorkVersion = workerVersion
 	worker.NodeName = nodeName
+
+	if fontsize != "" {
+		size, err := strconv.Atoi(fontsize)
+		if err != nil {
+			log.Printf("font err: %s \n", fontsize)
+			worker.WorkFont = 0
+		} else {
+			worker.WorkFont = size
+		}
+	}
+
 	log.Printf("worker: %+v \n", worker)
 
 	//start istio worker serve

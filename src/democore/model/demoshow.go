@@ -9,12 +9,14 @@ type DemoWorker struct {
 	WorkVersion string `json:"worker_version"`
 	NodeName    string `json:"node_name"`
 	WorkWay     int    `json:"work_way"`
+	WorkFont    int    `json:"work_font"`
 }
 
 type WorkInfo struct {
 	WorkLoad    int    `json:"workload"`
 	WorkVersion string `json:"work_version"`
 	NodeName    string `json:"node_name"`
+	WorkFont    int    `json:"work_font"`
 }
 
 type SystemInfo struct {
@@ -28,4 +30,5 @@ type WorkLoad struct {
 	WorkerID    string `json:"worker_id"`
 	WorkVersion string `json:"work_version"`
 	NodeName    string `json:"node_name"`
+	WorkFont    int    `json:"work_Font"`
 }
