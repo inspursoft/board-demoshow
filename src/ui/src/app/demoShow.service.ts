@@ -6,8 +6,8 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/observable/fromEvent';
 
-export const MAX_NODE_COUNT: number = 20;
-export const MAX_LINE_NUMBERS_COUNT: number = 20;
+export const MAX_NODE_COUNT = 20;
+export const MAX_LINE_NUMBERS_COUNT = 20;
 export interface INumber {
   sideLength: number;
   backColor: string;
@@ -17,7 +17,9 @@ export interface IWorkInfo {
   worker_id: string;
   worker_version: string;
   workload: number;
-  node_name:string;
+  node_name: string;
+  work_way: number;
+  work_font: number;
 }
 
 export interface INumberColor {

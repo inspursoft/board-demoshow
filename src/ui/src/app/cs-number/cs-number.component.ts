@@ -1,5 +1,5 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
-import { IWorkInfo } from '../demoShow.service';
+import {AfterViewChecked, AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild} from '@angular/core';
+import {IWorkInfo} from '../demoShow.service';
 
 const ARR_SIZE_UNIT: Array<string> = ['', 'k', 'm', 'g', 't'];
 
@@ -43,7 +43,7 @@ export class CsNumberComponent implements AfterViewInit, AfterViewChecked, OnDes
         this.drawWorkLoad('rgba(0, 50, 50, 1)');
       }
     } else {
-      if (this.isFirstVersion){
+      if (this.isFirstVersion) {
         this.drawBorder(this.defaultRadius, `rgba(217, 217, 217, 1)`);
         this.drawBorder(this.defaultRadius - this.borderWidth, `rgba(255, 255, 255, 1)`);
       } else {
@@ -84,27 +84,27 @@ export class CsNumberComponent implements AfterViewInit, AfterViewChecked, OnDes
   }
 
   private getNumberStr(): string {
-    let multiple: number = 1;
-    let times: number = 0;
+    let multiple = 1;
+    let times = 0;
     let value: number = this.workInfo.workload;
     while (value > 1000) {
       value = value / 1000;
       times += 1;
       multiple *= 1000;
     }
-    return `${Math.round(this.workInfo.workload / multiple * 100) / 100}${ARR_SIZE_UNIT[times] }`;
+    return `${Math.round(this.workInfo.workload / multiple * 100) / 100}${ARR_SIZE_UNIT[times]}`;
   }
 
   private drawHeptagon(radius: number, fillColor: string): void {
     this.canvasContext.beginPath();
     this.canvasContext.fillStyle = fillColor;
-    let radAngle = Math.PI * 2 / 7;
-    let radAlpha = 270 * Math.PI / 180;
+    const radAngle = Math.PI * 2 / 7;
+    const radAlpha = 270 * Math.PI / 180;
     let xPos = this.sideLength / 2 + Math.cos(radAlpha) * (radius);
     let yPos = this.sideLength / 2 + Math.sin(radAlpha) * (radius);
     this.canvasContext.moveTo(xPos, yPos);
     for (let i = 0; i < 7; i++) {
-      let rad = radAngle * i + radAlpha;
+      const rad = radAngle * i + radAlpha;
       xPos = this.sideLength / 2 + Math.cos(rad) * (radius);
       yPos = this.sideLength / 2 + Math.sin(rad) * (radius);
       this.canvasContext.lineTo(xPos, yPos);
@@ -121,11 +121,11 @@ export class CsNumberComponent implements AfterViewInit, AfterViewChecked, OnDes
   }
 
   private drawWorkLoad(fontColor: string) {
-    this.canvasContext.font = 'bold 36px arial';
+    this.canvasContext.font = `bold ${36 - this.workInfo.work_font}px arial`;
     let numberStr = this.getNumberStr();
     let numberWidth = this.canvasContext.measureText(numberStr).width;
-    let lineGradient = this.canvasContext.createLinearGradient(0, this.sideLength / 2 - 40, this.sideLength, this.sideLength / 2 - 40);
-    let textY = this.curWorkInfo.workload > 999 ? this.sideLength / 2 : this.sideLength / 2 + 10;
+    const lineGradient = this.canvasContext.createLinearGradient(0, this.sideLength / 2 - 40, this.sideLength, this.sideLength / 2 - 40);
+    const textY = this.curWorkInfo.workload > 999 ? this.sideLength / 2 : this.sideLength / 2 + 10;
     lineGradient.addColorStop(0, fontColor);
     lineGradient.addColorStop(1, fontColor);
     this.canvasContext.fillStyle = lineGradient;
@@ -135,7 +135,6 @@ export class CsNumberComponent implements AfterViewInit, AfterViewChecked, OnDes
       this.canvasContext.font = '16px arial';
       numberStr = this.curWorkInfo.workload.toString();
       numberWidth = this.canvasContext.measureText(numberStr).width;
-      this.canvasContext.measureText(numberStr).width;
       this.canvasContext.fillText(numberStr, this.sideLength / 2 - numberWidth / 2, this.sideLength / 2 + 40, numberWidth);
     }
   }
