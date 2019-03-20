@@ -10,8 +10,8 @@ demoui:
   replicaCount: 1
 
   image:
-    repository: 10.111.24.131:5001/demoshow_ui
-    tag: latest
+    repository: docker.io/inspurboard/demoui
+    tag: 0.9
     pullPolicy: Always
 
   service:
@@ -32,8 +32,8 @@ democore:
   replicaCount: 1
 
   image:
-    repository: 10.111.24.131:5001/demoshow_democore
-    tag: latest
+    repository: docker.io/inspurboard/democore
+    tag: 0.9
     pullPolicy: Always
 
   service:
@@ -54,8 +54,8 @@ demoworker:
   replicaCount: 2
 
   image:
-    repository: 10.111.24.131:5001/demoshow_demoworker
-    tag: latest
+    repository: docker.io/inspurboard/demoworker
+    tag: 0.9
     pullPolicy: Always
 
   service:
