@@ -10,6 +10,7 @@ type DemoWorker struct {
 	NodeName    string `json:"node_name"`
 	WorkWay     int    `json:"work_way"`
 	WorkFont    int    `json:"work_font"`
+	WorkLoadNum int    `json:"work_load_num"`
 }
 
 type WorkInfo struct {
@@ -17,6 +18,7 @@ type WorkInfo struct {
 	WorkVersion string `json:"work_version"`
 	NodeName    string `json:"node_name"`
 	WorkFont    int    `json:"work_font"`
+	WorkLoadNum int    `json:"work_load_num"`
 }
 
 type SystemInfo struct {
@@ -31,4 +33,5 @@ type WorkLoad struct {
 	WorkVersion string `json:"work_version"`
 	NodeName    string `json:"node_name"`
 	WorkFont    int    `json:"work_Font"`
+	WorkLoadNum int    `json:"work_load_num"`
 }

@@ -11,7 +11,10 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
+	//"github.com/shirou/gopsutil/cpu"
+	//"github.com/shirou/gopsutil/process"
 )
 
 type WorkLoad struct {
@@ -19,7 +22,16 @@ type WorkLoad struct {
 	WorkVersion string `json:"work_version"`
 	NodeName    string `json:"node_name"`
 	WorkFont    int    `json:"work_font"`
+	WorkLoadNum int    `json:"work_load_num"`
 }
+
+type ClickTimes struct {
+	Click   int  `json:"click"`
+	AddWork bool `json:"add_work"`
+}
+
+var StressLoop int
+var mLock sync.Mutex
 
 const (
 	DemocoreDefault = "127.0.0.1:8080"
@@ -27,7 +39,8 @@ const (
 	MaxPID          = 10000
 	WorkerVersion   = "1.0"
 	NodeDefault     = "127.0.0.1"
-	SleepSec        = 5
+	SleepSec        = 3
+	LoopStep        = 1000000
 )
 
 var worker WorkLoad
@@ -54,6 +67,83 @@ func istioserve() {
 	err := http.ListenAndServe(":9000", nil)
 	if err != nil {
 		log.Println("failed to listen 9000 in worker", err)
+	}
+}
+
+func AccessCore(accessurl string, worker WorkLoad, interval int) {
+	for {
+		//cpupercent, err := cpu.Percent(time.Second, false)
+		//log.Println(cpupercent)
+
+		worker.WorkLoadNum = StressLoop
+
+		payload, err := json.Marshal(worker)
+		if err != nil {
+			log.Printf("json request failed\n", err)
+			return
+		}
+
+		client := &http.Client{}
+		req, err := http.NewRequest("PUT", accessurl, strings.NewReader(string(payload)))
+
+		if err != nil {
+			log.Println("http request failed", err)
+			log.Printf("Sleeping %d sec\n", SleepSec)
+			time.Sleep(SleepSec * time.Second)
+			continue
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Println("send http request failed", err)
+			log.Printf("Sleeping %d sec\n", SleepSec)
+			time.Sleep(SleepSec * time.Second)
+			continue
+		}
+		defer resp.Body.Close()
+
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Println("read http response failed", err)
+			log.Printf("Sleeping %d sec\n", SleepSec)
+			time.Sleep(SleepSec * time.Second)
+			continue
+		}
+		log.Println(string(body))
+		time.Sleep(time.Duration(interval) * time.Second)
+	}
+}
+
+func DoStress() {
+	for {
+		for i := 0; i < StressLoop; i++ {
+		}
+		time.Sleep(10 * time.Microsecond)
+	}
+}
+
+func setStressHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Println("read http request failed", err)
+			return
+		}
+
+		var clickload ClickTimes
+		err = json.Unmarshal(body, &clickload)
+		log.Println(clickload)
+		if clickload.AddWork {
+			mLock.Lock()
+			StressLoop += LoopStep * clickload.Click
+			mLock.Unlock()
+		} else {
+			mLock.Lock()
+			StressLoop -= LoopStep * clickload.Click
+			mLock.Unlock()
+
+		}
+		log.Printf("StressLoop = %d\n", StressLoop)
 	}
 }
 
@@ -115,44 +205,19 @@ func main() {
 
 	log.Printf("worker: %+v \n", worker)
 
+	// set the default loop or get from env
+	StressLoop = LoopStep
+
 	//start istio worker serve
 	go istioserve()
 
-	load, err := json.Marshal(worker)
+	go AccessCore(accessURL, worker, interval)
+
+	http.HandleFunc("/setstress", setStressHandler)
+	go DoStress()
+
+	err := http.ListenAndServe(":9090", nil)
 	if err != nil {
-		log.Printf("json request failed\n", err)
-		return
-	}
-
-	for {
-		client := &http.Client{}
-
-		req, err := http.NewRequest("PUT", accessURL, strings.NewReader(string(load)))
-
-		if err != nil {
-			log.Println("http request failed", err)
-			log.Printf("Sleeping %d sec\n", SleepSec)
-			time.Sleep(SleepSec * time.Second)
-			continue
-		}
-
-		resp, err := client.Do(req)
-		if err != nil {
-			log.Println("send http request failed", err)
-			log.Printf("Sleeping %d sec\n", SleepSec)
-			time.Sleep(SleepSec * time.Second)
-			continue
-		}
-		defer resp.Body.Close()
-
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Println("read http response failed", err)
-			log.Printf("Sleeping %d sec\n", SleepSec)
-			time.Sleep(SleepSec * time.Second)
-			continue
-		}
-		log.Println(string(body))
-		time.Sleep(time.Duration(interval) * time.Second)
+		log.Fatal("ListenAdnServe: ", err.Error())
 	}
 }
