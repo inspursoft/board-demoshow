@@ -40,7 +40,7 @@ const (
 	WorkerVersion   = "1.0"
 	NodeDefault     = "127.0.0.1"
 	SleepSec        = 3
-	LoopStep        = 1000000
+	LoopStep        = 100000
 )
 
 var worker WorkLoad
@@ -213,7 +213,7 @@ func main() {
 
 	go AccessCore(accessURL, worker, interval)
 
-	http.HandleFunc("/setstress", setStressHandler)
+	http.HandleFunc("/api/v1/setstress", setStressHandler)
 	go DoStress()
 
 	err := http.ListenAndServe(":9090", nil)
