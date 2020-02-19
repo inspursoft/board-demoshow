@@ -40,7 +40,8 @@ const (
 	WorkerVersion   = "1.0"
 	NodeDefault     = "127.0.0.1"
 	SleepSec        = 3
-	LoopStep        = 100000
+        // 10000000 = 4m vcore
+	LoopStep        = 10000000  
 )
 
 var worker WorkLoad
@@ -118,7 +119,8 @@ func DoStress() {
 	for {
 		for i := 0; i < StressLoop; i++ {
 		}
-		time.Sleep(10 * time.Microsecond)
+		//time.Sleep(100 * time.Microsecond)  #baremetal
+		time.Sleep(1 * time.Second)
 	}
 }
 
