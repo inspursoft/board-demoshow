@@ -40,8 +40,8 @@ const (
 	WorkerVersion   = "1.0"
 	NodeDefault     = "127.0.0.1"
 	SleepSec        = 3
-        // 10000000 = 4m vcore
-	LoopStep        = 10000000  
+	// 10000000 = 4m vcore
+	LoopStep = 10000000
 )
 
 var worker WorkLoad
@@ -140,6 +140,10 @@ func setStressHandler(w http.ResponseWriter, r *http.Request) {
 			StressLoop += LoopStep * clickload.Click
 			mLock.Unlock()
 		} else {
+			if StressLoop < LoopStep*clickload.Click {
+				http.Error(w, "Stress num can not be less than 0", http.StatusBadRequest)
+				return
+			}
 			mLock.Lock()
 			StressLoop -= LoopStep * clickload.Click
 			mLock.Unlock()
